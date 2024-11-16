@@ -1,0 +1,65 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// creating the object for the lcd connected to the board
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// button used to get button input
+const int buttonPin = A0;
+
+// buttons for ultrasonic measurement
+const int trigPin = 9;
+const int echoPin = 10;
+
+void us_Seq() {
+  // sequence to send ultrasonic pulse
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+}
+
+float calc_dist() {
+  long duration = pulseIn(echoPin, HIGH);  // duration of ECHO pin HIGH
+  return ((duration * 0.034) / 2);         // calculate distance
+}
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);  // using internal pullup resistance
+  pinMode(trigPin, OUTPUT);          // pin used to send the ultrasonic pulse
+  pinMode(echoPin, INPUT);           // pin used to read the duration of the echo
+
+  lcd.init();       // initialization of the lcd
+  lcd.backlight();  // activating the lcd backlight
+
+  Serial.begin(9600);  // initialization of the lcd communication
+}
+
+void loop() {
+  int buttonState = digitalRead(buttonPin);  // reading button state
+
+  if (buttonState == LOW) {
+    // getting distance from sensor
+    us_Seq();
+    long duration = pulseIn(echoPin, HIGH);  // duration of ECHO pin HIGH
+    float distance((duration * 0.034) / 2);  // calculate distance
+
+    // printing measurment
+    lcd.clear();  // clearing button
+    lcd.setCursor(0, 0);
+    lcd.print("Distance: ");
+    lcd.setCursor(0, 1);
+    lcd.print(distance);
+    lcd.setCursor(5, 1);
+    lcd.print("cm");
+    delay(1000);
+  } else if (buttonState == HIGH) {
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Button NOT");
+    lcd.setCursor(0, 1);
+    lcd.print("pressed");
+    delay(1000);
+  }
+}
