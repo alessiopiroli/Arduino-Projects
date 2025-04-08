@@ -1,14 +1,14 @@
 import serial
 import subprocess
 
-microcontroller_port = 'COM4'
-baud_rate = 9600
+microcontroller_port = 'your_com_port'
+baud_rate = your_baud_rate
 
 ser = serial.Seril(microcontroller_port, baud_rate, timeout = 1)
 
 def run_script():
-    print("Executing the Python script...")
-    subprocess.run(['python', r'\Users\aless\Desktop\Arduino projects\noise_script.py'])
+    print("Running the script")
+    subprocess.run(['python', r'path_to_noise_script'])
 
 try:
     while True:
@@ -17,7 +17,7 @@ try:
             run_script()
 
 except KeyboardInterrupt:
-    printing("Exiting...")
+    printing("Quit")
 
 finally:
     ser.close()
